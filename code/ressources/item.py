@@ -11,7 +11,8 @@ class Item(Resource):
         item=ItemModel.find_by_name(name)
 
         if item:
-            return item
+            
+            return item.json() #because ItemModel returns now a dictionnary 
         
         return {"message":"Item not found  "}
 
@@ -22,10 +23,10 @@ class Item(Resource):
         if ItemModel.find_by_name(name):
             return {"message": "An item with {} already exists ".format(name)},400
         data=Item.parser.parse_args()
-        item={"name":name,"price":data["price"]}
+        item=ItemModel(name,data["price"])
         #Because the insertion can raise an error 
         try:
-            ItemModel.insert(item)
+            item.insert()
         except:
             return {"Message": "An error occured inserting the item."},500 #Internal Server Error
         return item,201
@@ -47,20 +48,20 @@ class Item(Resource):
 
         data=Item.parser.parse_args()
         item=ItemModel.find_by_name(name)
-        updated_item={"name":name,"price":data["price"]}
+        updated_item=ItemModel(name,data["price"])
 
         if item is None:
             try:
-                ItemModel.insert(updated_item)
+                updated_item.insert()
             except:
                 return {"message":"An error occurred inserting the item"},500
         else:
             try:
-                ItemModel.update(updated_item)
+                updated_item.update()
             except:
                 return {"message":"An error occurred updating the item"},500
         
-        return updated_item
+        return updated_item.json()
 
  
 class ItemList(Resource):
