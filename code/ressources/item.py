@@ -1,5 +1,4 @@
 from multiprocessing.dummy import connection
-import sqlite3
 from flask_restful import Resource,reqparse
 from flask_jwt import jwt_required
 from models.item import ItemModel
@@ -57,15 +56,6 @@ class ItemList(Resource):
     # def get(self):
     #     return {"items":items}
     def get(self):
-        connection=sqlite3.connect("data.db")
-        cursor=connection.cursor()
-        query="SELECT * from items  "
-        result=cursor.execute(query)
-        items=[]
-        for row in result:
-            items.append({"name":row[0],"price":row[1]})
+        
 
-        connection.commit()
-        connection.close()
-
-        return {"items":items}
+        return {"items":[item.json() for item in ItemModel.query.all()]}
