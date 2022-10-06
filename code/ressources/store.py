@@ -17,7 +17,7 @@ class Store(Resource):
         
         store=StoreModel(name)
         try:
-            store.save_to_db(store)
+            store.save_to_db()
         except:
             return {"message": "An error occured while creating the store."},500
         
@@ -35,5 +35,5 @@ class StoreList(Resource):
 
     
     def get(self):
-        return {"stores":[store.json() for store in StoreModel.items]}
+        return {"stores":[store.json() for store in StoreModel.query.all()]}
 
